@@ -1,5 +1,8 @@
 #include <iostream>
 #include <vector>
+#include <boost/type_index.hpp>
+
+using boost::typeindex::type_id_with_cvr;
 
 /**
  *   @brief IMPORTANT!
@@ -29,7 +32,7 @@ void f1(T&& param)
 
 template <typename Object, typename Type>
 auto changeObjectValue(Object& ref, Type value)
-{ 
+{
     ref = value;
     // auto deduces referencess after retutn we get int 
     return ref;
@@ -52,8 +55,9 @@ auto getRValue(Object& param)
 
 template <typename Object>
 auto getRvalReference(Object&& param)
+->decltype(param)
 {
-    // without decltype passing an l-value as argument will give return l-value reerence 
+    // without decltype passing an l-value as argument will give return l-value reference 
     return param;
 }
 
@@ -61,13 +65,10 @@ auto getRvalReference(Object&& param)
 int
 main()
 {
-    int x = 100;
-
-    decltype(auto) newXValue = changeObjectValue(x,10);
-    assignNewValue(x) = 100000;
-
-    const int cx = 1;
-    auto cxAuto = cx;                   // cxAuto deduced to be     const int / auto       int
-    decltype(auto) cxDecltype = cx;     // cxDeclype                const int / auto const int 
+    int x = 10;
+   
+    std::cout << "test = "
+    << type_id_with_cvr<decltype(getRvalReference(100))>().pretty_name() 
+    << "\n";
 
 }
